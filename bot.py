@@ -6,18 +6,30 @@ import telepot
 import urllib2
 import os
 import atexit
+import schedule
 from subprocess import call
 
 def goodNight():
     bot.sendMessage(owner, 'Good Night.')
 
 atexit.register(goodNight)
-f = open('credentials', 'r')
-token = f.read(45)
-f.readline()
-owner = f.read(8);
 
+def wakeup():
+    time = datetime.datetime.now()
+    text = "Good Morning, Master. It is {0:02d}:{1:02d} o'clock. The date is {2}.{3}.{4}".format(time.hour,time.minute,time.day,time.month,time.year)
+    bot.sendMessage(owner, text)
+    text = 'I send you the weather forecast for your current location.'
+    bot.sendMessage(owner, text)
+    call(['./weather.sh', '098620'])
+    with open('weather.png', 'r') as img:
+        bot.sendPhoto(owner, img)
+# schedule.every(1).seconds.do(wakeup)
+schedule.every().day.at("6:40").do(wakeup)
 
+with open('credentials', 'r') as f:
+    token = f.read(45)
+    f.readline()
+    owner = f.read(8);
 
 def handle(msg):
     chat_id = msg['chat']['id']
@@ -32,29 +44,24 @@ def handle(msg):
     # Weather
     if command == 'Giesing':
         call(['./weather.sh', '098620'])
-        img = open('weather.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('weather.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
     elif command == 'Heidelberg':
         call(['./weather.sh', '107320'])
-        img = open('weather.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('weather.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
     elif command == 'Ladenburg':
         call(['./weather.sh', '107250'])
-        img = open('weather.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('weather.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
     elif command == 'Muenster':
         call(['./weather.sh', '103130'])
-        img = open('weather.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('weather.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
     elif command == 'Kahl':
         call(['./weather.sh', '194309'])
-        img = open('weather.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('weather.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
         
         # server time
     elif command == '/time':
@@ -99,4 +106,5 @@ bot.sendMessage(owner, 'Listening ... ')
 print 'listening ...'
 
 while 1:
-    time.sleep(10)
+    time.sleep(1)
+    schedule.run_pending()
