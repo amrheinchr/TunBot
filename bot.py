@@ -76,14 +76,12 @@ def handle(msg):
         res.close()
     elif command == '/xkcd':
         call('./xkcd.sh')
-        img = open('tmp.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('tmp.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
     elif command == '/smbc':
         call('./smbc.sh')
-        img = open('smbc.png', 'r')
-        bot.sendPhoto(chat_id, img)
-        img.close()
+        with open('smbc.png', 'r') as img:
+            bot.sendPhoto(chat_id, img)
         # call('rm tmp.png')
     elif command == '/update':
         call('./update.sh')
